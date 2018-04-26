@@ -1,7 +1,7 @@
 package com.hyc.commandservice.lock;
 
 /**
- * @Description:
+ * @Description: zookeeper分布式锁实现
  * @Author: wangheng2
  * @Date: 2018年04月26日
  * @Modified By:
