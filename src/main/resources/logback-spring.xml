@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false" scan="true" scanPeriod="30 seconds">
+    <!-- 定义参数 -->
+    <property name="log.level" value="info"/>
+    <property name="log.filePath" value="d://logs"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are  by default assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] | %-5level | %logger | - %msg%n</pattern>
+
+            <!-- 常用的Pattern变量,大家可打开该pattern进行输出观察 -->
+            <!--
+              <pattern>
+                  %d{yyyy-MM-dd HH:mm:ss} [%level] - %msg%n
+                  Logger: %logger
+                  Class: %class
+                  File: %file
+                  Caller: %caller
+                  Line: %line
+                  Message: %m
+                  Method: %M
+                  Relative: %relative
+                  Thread: %thread
+                  Exception: %ex
+                  xException: %xEx
+                  nopException: %nopex
+                  rException: %rEx
+                  Marker: %marker
+                  %n
+
+              </pattern>
+               -->
+        </encoder>
+    </appender>
+
+    <!-- 按日期区分的滚动日志 -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.filePath}//commandservice-error.log</file>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] | %-5level | %class:%M\(\) | - %msg%n</pattern>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <!--<onMatch>ACCEPT</onMatch>-->
+            <!--<onMismatch>DENY</onMismatch>-->
+        </filter>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>error.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 按文件大小区分的滚动日志 -->
+    <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.filePath}//commandservice-info.log</file>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] | %-5level | %logger | - %msg%n</pattern>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>info.%i.log</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>3</maxIndex>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>5MB</maxFileSize>
+        </triggeringPolicy>
+
+    </appender>
+
+
+    <!-- 按日期和大小区分的滚动日志 -->
+    <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.filePath}//commandservice-debug.log</file>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] | %-5level | %class:%M\(\) | - %msg%n</pattern>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <!--<onMatch>ACCEPT</onMatch>-->
+            <!--<onMismatch>DENY</onMismatch>-->
+        </filter>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>debug-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>30MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+
+        </rollingPolicy>
+
+    </appender>
+
+
+    <!-- 级别阀值过滤 -->
+    <!--
+        <appender name="SUM-OUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>logs/sum.log</file>
+
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss} [%class:%line] - %m%n</pattern>
+            </encoder>
+
+            &lt;!&ndash; deny all events with migration level below INFO, that is TRACE and DEBUG &ndash;&gt;
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>INFO</level>
+            </filter>
+
+
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                &lt;!&ndash; rollover daily &ndash;&gt;
+                <fileNamePattern>debug-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+
+                <timeBasedFileNamingAndTriggeringPolicy
+                        class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    &lt;!&ndash; or whenever the file size reaches 100MB &ndash;&gt;
+                    <maxFileSize>100MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+
+            </rollingPolicy>
+
+        </appender>
+    -->
+    <!-- project default level -->
+    <logger name="java.sql" level="INFO"/>
+
+    <logger name="org.apache" level="WARN">
+        <appender-ref ref="ERROR"/>
+    </logger>
+    <logger name="org.mybatis" level="ERROR">
+        <appender-ref ref="ERROR"/>
+    </logger>
+    <logger name="org.springframework" level="ERROR">
+        <appender-ref ref="ERROR"/>
+    </logger>
+    <logger name="com.fasterxml.jackson" level="ERROR">
+        <appender-ref ref="ERROR"/>
+    </logger>
+    <logger name="net.sf.ehcache" level="WARN">
+        <appender-ref ref="ERROR"/>
+    </logger>
+    <logger name="org.aspectj" level="WARN">
+        <appender-ref ref="ERROR"/>
+    </logger>
+    <logger name="ch.qos.logback" level="WARN"/>
+    <logger name="org.springframework.cache" level="DEBUG">
+        <appender-ref ref="DEBUG"/>
+    </logger>
+    <root level="${log.lever}">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ERROR"/>
+        <appender-ref ref="INFO"/>
+        <appender-ref ref="DEBUG"/>
+        <!--<appender-ref ref="SUM-OUT"/>-->
+    </root>
+</configuration>

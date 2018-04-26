@@ -1,0 +1,37 @@
+web:
+  build: .
+  links:
+    - db
+  ports:
+    - "3000:8080"
+    - "3002:9555"
+  restart: always
+  environment:
+    filestoreroot: /opt/store/interview
+    spring_http_multipart_location: /opt/store/interview/temp
+    logging_path: /opt/logs
+    dbaddress: db:3306
+    dbname: interview
+    logging_level_root: INFO
+    spring_datasource_password: "Hxycjk!@#123"
+  privileged: true
+  volumes:
+    - ./logs:/opt/logs
+    - ./filestore:/opt/store/interview
+db:
+  image: mysql:5.7.18
+  ports:
+    - "3001:3306"
+  environment:
+    MYSQL_ROOT_PASSWORD: "Hxycjk!@#123"
+    MYSQL_USER: hyc
+    MYSQL_PASSWORD: "Hxycjk!@#123"
+    character-set-server: utf8
+    collation-server: utf8_general_ci
+    init-connect: "SET NAMES UTF8;"
+    log_timestamps: SYSTEM
+  restart: always
+  privileged: true
+  volumes:
+      - ./mysql:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
