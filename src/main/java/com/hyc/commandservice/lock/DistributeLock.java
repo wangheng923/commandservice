@@ -1,7 +1,5 @@
 package com.hyc.commandservice.lock;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * @Description:
  * @Author: wangheng2
