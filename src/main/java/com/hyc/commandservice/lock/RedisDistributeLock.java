@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
@@ -83,8 +82,10 @@ public class RedisDistributeLock implements DistributeLock {
                     return connection.del(key);
                 }
             });
+            logger.debug("release lock key:{} success", key);
             return result.longValue();
         } catch (Exception e) {
+            logger.error("release key:{} lock error:{}", key, e);
             return -1;
         }
     }
@@ -98,9 +99,12 @@ public class RedisDistributeLock implements DistributeLock {
             } while (!setResult && System.currentTimeMillis() < end);
             if (!setResult) {
                 logger.debug("key:{}, waitForLock in {} milliseconds timeout", key, time);
+            } else {
+                logger.debug("get key:{} lock success", key);
             }
             return setResult;
         } catch (Exception e) {
+            logger.error("get key:{} lock error:{}", key, e);
             return false;
         }
     }

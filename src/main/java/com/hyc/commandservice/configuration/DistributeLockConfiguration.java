@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @Description: Redis分布式锁实现
+ * @Description: 分布式锁配置
  * @Author: wangheng2
  * @Date: 2018年04月26日
  * @Modified By:
@@ -19,19 +19,19 @@ import org.springframework.context.annotation.Configuration;
 public class DistributeLockConfiguration {
 
     /***
-     * 锁实现方式
+     * 锁实现方式, 默认redis
      */
-    private String way;
+    private String way = "redis";
 
     /***
-     * 锁过期时间（毫秒）
+     * 锁过期时间（毫秒）, 默认5秒
      */
-    private long expireTime;
+    private long expireTime = 5000;
 
     /***
-     * 重试次数
+     * 重试次数, 默认3次
      */
-    private int retryTime;
+    private int retryTime = 3;
 
     public String getWay() {
         return way;
@@ -58,7 +58,7 @@ public class DistributeLockConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "distribute.lock.way", havingValue = "redis")
+    @ConditionalOnProperty(name = "distribute.lock.way", havingValue = "redis", matchIfMissing = true)
     public DistributeLock getRedisDistributeLock() {
         RedisDistributeLock redisDistributeLock = new RedisDistributeLock();
         redisDistributeLock.setExpireTime(this.expireTime);
@@ -69,7 +69,6 @@ public class DistributeLockConfiguration {
     @Bean
     @ConditionalOnProperty(name = "distribute.lock.way", havingValue = "zookeeper")
     public DistributeLock getZookeeperDistributeLock() {
-        System.out.println("Zookeeper expireTime: " + expireTime + " retryTime:" + retryTime);
         return new ZookeeperDistributeLock();
     }
 }
